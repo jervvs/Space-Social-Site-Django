@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import Http404
+from django.contrib import messages
 
 #what is braces for? SelectRelatedMixin can be used to
 from braces.views import SelectRelatedMixin
@@ -47,12 +48,13 @@ class PostDetail(SelectRelatedMixin,generic.DetailView):
 class CreatePost(LoginRequiredMixin, SelectRelatedMixin,generic.CreateView):
     fields = ('message','group')
     model = models.Post
-    redirect_field_name = 'posts/post_list.html'
-    form_class = forms.PostForm
 
-    def form_valid(self,form):
+    def get_success_url(self):
+        return reverse_lazy('posts:all')
+
+    def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.user = self.request.username
+        self.object.user = self.request.user
         self.object.save() #connects actual post to user itself
         return super().form_valid(form)
 

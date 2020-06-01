@@ -1,16 +1,17 @@
 {% extends 'posts/post_base.html'%}
 
-{% block pre_post %}
+
+{% block prepost %}
 <div class="col-md-4">
   <!-- why is it request here? -->
-  {% if request.user.is_authenticated%}
+  {% if request.user.is_authenticated %}
   <div class="card card-with-shadow">
     <h5 class='title'>Your Groups</h5>
     <ul class='list-unstyled'>
       <!-- we can do this cos of the register in group models in the related name -->
-      {% for member_group in get_user_group %}
+      {% for member_group in user.user_groups.all %}
       <li class='group li-with-bullet'>
-        <a href="{%url 'groups:single' slug=member_group.group.slug %}"></a>
+        <a href="{%url 'groups:single' slug=member_group.group.slug %}">{{ member_group.group.name }}</a>
       </li>
       {% endfor %}
     </ul>
@@ -20,9 +21,10 @@
     <div class="content">
       <h5 class='title'> All Groups</h5>
       <ul class='list-unstyle'>
+        {# {% get_other_user_groups as other_groups %}#}
         {% for other_group in get_other_groups %}
         <li class='group li-with-bullet'>
-          <a href="{% url 'groups:single' slug=other_group.slug %}">z</a>
+          <a href="{% url 'groups:single' slug=other_group.slug %}">{{ other_group.name }}</a>
         </li>
         {% endfor %}
       </ul>
